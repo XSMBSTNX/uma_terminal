@@ -1,0 +1,109 @@
+/* Reset podstawowy */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Cała strona – ciemne tło, centrowanie ekranu */
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #02040a;
+  color: #aef2a0;
+  font-family: "Menlo", "Consolas", "Courier New", monospace;
+}
+
+/* Wrapper pod „ekran” – docelowo dopasowany pod telefon */
+.crt-wrapper {
+  width: 100%;
+  max-width: 390px;      /* docelowa szerokość pod telefon */
+  aspect-ratio: 390 / 844;
+  padding: 8px;
+}
+
+/* Sam ekran CRT */
+.crt-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 40%, #071b08 0%, #020804 55%, #000000 100%);
+  overflow: hidden;
+  border-radius: 14px;
+  border: 2px solid #1b3b24;
+  box-shadow:
+    0 0 12px rgba(0, 255, 100, 0.15),
+    0 0 40px rgba(0, 255, 100, 0.15);
+}
+
+/* Efekty CRT: scanlines i winieta nakładane jako overlaye */
+.crt-overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
+/* Poziome linie scanlines */
+.crt-overlay-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.25) 0,
+    rgba(0, 0, 0, 0.25) 1px,
+    rgba(0, 0, 0, 0) 2px
+  );
+  mix-blend-mode: multiply;
+}
+
+/* Winieta + lekkie „zakrzywienie” */
+.crt-overlay-vignette {
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.95),
+    inset 0 0 120px rgba(0, 0, 0, 0.95);
+}
+
+/* Treść terminala */
+#terminal {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  padding: 12px 14px;
+  color: #aef2a0;
+  font-size: 12px;
+  line-height: 1.3;
+  text-shadow:
+    0 0 4px rgba(134, 255, 164, 0.4),
+    0 0 8px rgba(134, 255, 164, 0.15);
+  overflow: hidden;
+  white-space: pre-wrap;
+}
+
+/* Lekki flicker całego ekranu */
+.crt-screen {
+  animation: crt-flicker 3s infinite steps(1, end);
+}
+
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.98; }
+  70% { opacity: 1; }
+  80% { opacity: 0.96; }
+}
+
+/* Opcjonalny pseudo-kursor, gdybyśmy go chcieli później dorzucić */
+.cursor {
+  display: inline-block;
+  width: 7px;
+  background: #aef2a0;
+  animation: cursor-blink 1s steps(1, end) infinite;
+}
+
+@keyframes cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
