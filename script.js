@@ -1,6 +1,17 @@
-// Prosty BOOT – na razie „placeholder” pod Twoją narrację
+// =========================
+//   SYSTEM SCEN UMA_CORE
+// =========================
 
-const lines = [
+let currentScene = "BOOT";
+let waitingForInput = false;
+
+const terminal = document.getElementById("terminal");
+
+// --------------
+// SCENA: BOOT
+// --------------
+
+const BOOT_LINES = [
   "UMA_CORE v0.1.3  [DIAGNOSTIC BUILD]",
   "------------------------------------------------",
   "INIT  :: mounting system volumes...",
@@ -15,34 +26,107 @@ const lines = [
   "HINT  :: press any key to continue boot sequence...",
 ];
 
-const terminal = document.getElementById("terminal");
 
-let currentLine = 0;
+// --------------
+// SCENA: BOOT_2
+// --------------
 
-function printNextLine() {
-  if (currentLine >= lines.length) {
-    // po zakończeniu bootowania możemy dodać np. kursor
-    const cursor = document.createElement("span");
-    cursor.classList.add("cursor");
-    cursor.textContent = " ";
-    terminal.appendChild(document.createTextNode("\n\nREADY // "));
-    terminal.appendChild(cursor);
-    return;
-  }
+const BOOT2_LINES = [
+  "",
+  "--------------------------------------------",
+  "UMA_BOOTLOADER v2.02",
+  "STATUS :: suspended",
+  "",
+  "REASON :: unauthorized activity detected",
+  "",
+  "SCAN   :: scanning connected device...",
+  "SCAN   :: checking integrity...",
+  "SCAN   :: reading hardware fingerprint...",
+  "",
+  "RESULT :: [INTRUDER DETECTED] !!!",
+  "",
+  "OVERRIDE :: system override locked...",
+  "OVERRIDE :: attempting fallback mode...",
+  "",
+  "HINT :: system requires manual confirmation...",
+  "PRESS ANY KEY TO CONTINUE...",
+];
 
-  const line = lines[currentLine];
 
-  // Doklejamy linię do terminala
-  terminal.textContent += line + "\n";
+// =========================
+//   FUNKCJE WSPÓLNE
+// =========================
 
-  currentLine++;
-
-  // Minimalne opóźnienie między liniami (tu możemy się bawić klimatem)
-  const delay = 200 + Math.random() * 200; // 200–400 ms
-  setTimeout(printNextLine, delay);
+function clearScreen() {
+  terminal.textContent = "";
 }
 
-// Start boot sequence po załadowaniu DOM
+function printLines(lines, callback) {
+  let index = 0;
+
+  function next() {
+    if (index >= lines.length) {
+      waitingForInput = true;
+      if (callback) callback();
+      return;
+    }
+    terminal.textContent += lines[index] + "\n";
+    index++;
+
+    const delay = 180 + Math.random() * 220;
+    setTimeout(next, delay);
+  }
+
+  next();
+}
+
+
+// =========================
+//   URUCHAMIANIE SCEN
+// =========================
+
+function startScene(sceneName) {
+  clearScreen();
+  waitingForInput = false;
+  currentScene = sceneName;
+
+  if (sceneName === "BOOT") {
+    printLines(BOOT_LINES);
+  }
+
+  if (sceneName === "BOOT_2") {
+    printLines(BOOT2_LINES);
+  }
+}
+
+
+// =========================
+//   EVENT: TAP / KLIK / KEY
+// =========================
+
+function handleContinue() {
+  if (!waitingForInput) return;
+
+  if (currentScene === "BOOT") {
+    startScene("BOOT_2");
+  }
+
+  else if (currentScene === "BOOT_2") {
+    // tu zrobimy SCREEN STORM
+    clearScreen();
+    terminal.textContent = ">> STORM MODE [WIP]\n";
+  }
+}
+
+window.addEventListener("keydown", handleContinue);
+window.addEventListener("click", handleContinue);
+window.addEventListener("touchstart", handleContinue);
+
+
+// =========================
+//   START
+// =========================
+
 window.addEventListener("DOMContentLoaded", () => {
-  printNextLine();
+  startScene("BOOT");
 });
