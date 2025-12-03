@@ -1,16 +1,14 @@
-// =========================
-//   SYSTEM SCEN UMA_CORE
-// =========================
+// =============================
+//  UMA_CORE TERMINAL SCRIPT
+//  (wersja: BOOT only)
+// =============================
+
+const terminal = document.getElementById("terminal");
 
 let currentScene = "BOOT";
 let waitingForInput = false;
 
-const terminal = document.getElementById("terminal");
-
-// --------------
-// SCENA: BOOT
-// --------------
-
+// BOOT scene lines for UMA_CORE terminal
 const BOOT_LINES = [
   { text: "[ UMA-CORE TERMINAL v0.7 ]     channel: /core/boot", className: "log-title" },
   { text: "", className: "log-line" },
@@ -25,22 +23,22 @@ const BOOT_LINES = [
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "┌────────────────────────────────────────────────────┐", className: "log-line" },
-  { text: "│ kernel.id\"\"version [kernel.id/krn03_onyx/v7.3]   │", className: "log-line" },
+  { text: "│ kernel.id\"\"version [kernel.id/krn03_onyx/v7.3]     │", className: "log-line" },
   { text: "│ localize.(kernel.id)                               │", className: "log-line" },
   { text: "│ KRN_STRT_QR_DATABASE_DISTRICT[0c002]               │", className: "log-line" },
   { text: "│ kernel.id                                          │", className: "log-line" },
   { text: "│ {name} [o▒▒ld.data▒▒▒▒▒▒]                          │", className: "log-line" },
   { text: "└────────────────────────────────────────────────────┘", className: "log-line" },
   { text: "", className: "log-line" },
-  { text: "> request terminated ................................ [!]", className: "log-line" },
+  { text: "> request terminated ................................ [!]", className: "log-err" },
   { text: "", className: "log-line" },
   { text: "ERROR   :: {kernel version incompatible}", className: "log-err" },
-  { text: "NOTICE! :: connection suspended", className: "log-line" },
-  { text: "REASON  :: kernel version integrity [ERROR]", className: "log-warn" },
+  { text: "NOTICE! :: connection suspended", className: "log-warn" },
+  { text: "REASON  :: kernel version integrity [ERROR]", className: "log-err" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "> updating . . .", className: "log-line" },
-  { text: "[▒████████▒▒█████████▒▒] [100%]", className: "log-line" },
+  { text: "[▒████████▒▒█████████▒▒] [100%]", className: "log-ok" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "> update status ..................................... [OK]", className: "log-ok" },
@@ -55,20 +53,20 @@ const BOOT_LINES = [
   { text: "> kernel.id check ................................... [OK]", className: "log-ok" },
   { text: "> downloading assets ................................ [COMPLETE]", className: "log-ok" },
   { text: "", className: "log-line" },
-  { text: "=====================[ KERNEL v7.3 ]=====================", className: "log-line" },
+  { text: "=====================[ KERNEL v7.3 ]=====================", className: "log-title" },
   { text: "", className: "log-line" },
   { text: "\"ui.index_data\" not found — terminal will operate only in [LEGACY_MODE]\"", className: "log-warn" },
   { text: "", className: "log-line" },
-  { text: "▓▒░ signal weak", className: "log-line" },
+  { text: "▓▒░ signal weak", className: "log-warn" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "╔════════════════════════════════════════════════════╗", className: "log-line" },
-  { text: "║▒[listing assets]▒[レガシー・モード]▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒║", className: "log-line" },
+  { text: "║ [listing assets] [レガシー・モード]                        ║", className: "log-line" },
   { text: "║────────────────────────────────────────────────────║", className: "log-line" },
   { text: "║   [■■□□-DEV.DATA]                                  ║", className: "log-line" },
   { text: "║ ┌ [dev]:/uma_core                                  ║", className: "log-line" },
   { text: "║ ├─ [/flav_drivers#?]                               ║", className: "log-line" },
-  { text: "║ ├─ [??/mem_shard03/{d▒▒▒a▒▒▒ta}] [CORRUPTED]       ║", className: "log-line" },
+  { text: "║ ├─ [??/mem_shard03/{d▒▒▒a▒▒▒ta}] [CORRUPTED]       ║", className: "log-warn" },
   { text: "║ ├─ [boot.local.data]                               ║", className: "log-line" },
   { text: "║ │   ├─ [password.passer] + [shard-03]              ║", className: "log-line" },
   { text: "║ │   └─ [data.regex.dns]                            ║", className: "log-line" },
@@ -84,14 +82,14 @@ const BOOT_LINES = [
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "┌ TRACE.LOG 0x004F ──────────────────┐ ┌ SUBSYS: UMA_CORE ──────────┐", className: "log-line" },
-  { text: "│ packets_in:     8821               │ │ cpu.temp:        43°C      │", className: "log-line" },
-  { text: "│ packets_out:    0092               │ │ memory.alloc:    82%       │", className: "log-line" },
-  { text: "└────────────────────────────────────┘ │ kernel: v7.3 / krn03       │", className: "log-line" },
-  { text: "                                       │ kernel.stable:   [TRUE]    │", className: "log-line" },
-  { text: "┌ SYSTEM ───────────────────────────┐  │ anomaly:         [TRUE]    │", className: "log-line" },
-  { text: "│ cpu: 43%     temp: 43°C           │  └────────────────────────────┘", className: "log-line" },
+  { text: "│ packets_in:     8821               │ │ cpu.temp:        43°C        │", className: "log-line" },
+  { text: "│ packets_out:    0092               │ │ memory.alloc:    82%         │", className: "log-line" },
+  { text: "└────────────────────────────────────┘ │ kernel: v7.3 / krn03         │", className: "log-line" },
+  { text: "                                      │ kernel.stable:   [TRUE]       │", className: "log-line" },
+  { text: "┌ SYSTEM ───────────────────────────┐ │ anomaly:         [TRUE]       │", className: "log-line" },
+  { text: "│ cpu: 43%     temp: 43°C           │ └──────────────────────────────┘", className: "log-line" },
   { text: "│ ram: 61%     swap: 12%            │", className: "log-line" },
-  { text: "└───────────────────────────────────┘", className: "log-line" },
+  { text: "└────────────────────────────────────┘", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "> boot files mounting . . .", className: "log-line" },
@@ -100,11 +98,11 @@ const BOOT_LINES = [
   { text: "dir/files.......... [▒▒▒▒▒▒▒▒░▒▒▒▒▒]   [1/4]", className: "log-line" },
   { text: "dir/files.......... [▒▒▒▒▒▒▒░░░▒▒░]    [2/4]", className: "log-line" },
   { text: "dir/files.......... [▒░░░▒▒▒▒▒▒░]      [3/4]", className: "log-line" },
-  { text: "dir/files.......... [■■■□□□#############/4]", className: "log-line" },
+  { text: "dir/files.......... [■■■□□□#############/4]", className: "log-warn" },
   { text: "", className: "log-line" },
-  { text: "\"STOP ............................................... [!]\"", className: "log-line" },
+  { text: "\"STOP ............................................... [!]\"", className: "log-err" },
   { text: "\"process will continue after:\"", className: "log-line" },
-  { text: "[data.fetch] ....................................... [complete]", className: "log-line" },
+  { text: "[data.fetch] ....................................... [complete]", className: "log-ok" },
   { text: "", className: "log-line" },
   { text: "> checking hardware fingerprint/data ............... [OK]", className: "log-ok" },
   { text: "> loading FLAV-drivers ............................. [OK]", className: "log-ok" },
@@ -114,35 +112,35 @@ const BOOT_LINES = [
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "┌────────────────────────────────────────────────────┐", className: "log-line" },
-  { text: "│ [!]   WARN: cache corrupted                    [!] │", className: "log-warn" },
+  { text: "│ [!]   WARN: cache corrupted                     [!] │", className: "log-warn" },
   { text: "│ [!]   ERR: shard-03 read FAIL                  [!] │", className: "log-err" },
   { text: "└────────────────────────────────────────────────────┘", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
-  { text: "> FILE : [shard-03] read fail", className: "log-line" },
-  { text: "\"cannot perform system installation\"", className: "log-line" },
+  { text: "> FILE : [shard-03] read fail", className: "log-err" },
+  { text: "\"cannot perform system installation\"", className: "log-err" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "??# [SAFETY.GATE] performing {kernel.id} lockdown", className: "log-warn" },
-  { text: "> lockdown.progress ................. [■■■■■□□□□□□] [47%] ((ERR!))", className: "log-line" },
+  { text: "> lockdown.progress ................. [■■■■■□□□□□□] [47%] ((ERR!))", className: "log-err" },
   { text: "> shutting down UMA-core //           [FAST.on]", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "\"saving {kernel.id}{data.file}{state} with [fallback.STM.exe]\"", className: "log-line" },
   { text: "> initializing fallback.STM.exe", className: "log-line" },
   { text: "  initializing... [▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒] ", className: "log-line" },
   { text: "> attempt............................ [1/3]", className: "log-line" },
-  { text: "> {kernel.id} state.................. [stable]", className: "log-line" },
+  { text: "> {kernel.id} state.................. [stable]", className: "log-ok" },
   { text: "> console.override................... [correct]", className: "log-line" },
   { text: "> restoring from cache............... [OK]", className: "log-ok" },
-  { text: "> {kernel.id} state.................. [SAVED]", className: "log-line" },
+  { text: "> {kernel.id} state.................. [SAVED]", className: "log-ok" },
   { text: "> shutting down UMA-core ............ [OK]", className: "log-ok" },
-  { text: "> lockdown.progress ................. [████▒▒▒▒▒▒] [47%] ((ERR!))", className: "log-line" },
+  { text: "> lockdown.progress ................. [████▒▒▒▒▒▒] [47%] ((ERR!))", className: "log-err" },
   { text: "", className: "log-line" },
   { text: "> initializing fallback.STM.exe", className: "log-line" },
   { text: "  initializing... [▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒]", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "> restoring from cache . . .", className: "log-line" },
-  { text: "> restore ........................... [complete]", className: "log-line" },
+  { text: "> restore ........................... [complete]", className: "log-ok" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "pending . . .", className: "log-line" },
@@ -152,24 +150,20 @@ const BOOT_LINES = [
   { text: "> proceed ........................................... [?]", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
-  { text: "       ┌─────────────────[ CONFIRM ]───────────────────┐", className: "log-title" },
-  { text: "       │ [user] redirect to? [fallback.stm]?           │", className: "log-line" },
-  { text: "       │                                               │", className: "log-line" },
-  { text: "       │                                               │", className: "log-line" },
-  { text: "       │        [Y] yes                   [N] no       │", className: "log-line" },
-  { text: "       └───────────────────────────────────────────────┘", className: "log-line" },
+  { text: "       ┌──────────────────────[ CONFIRM ]──────────────────────┐", className: "log-title" },
+  { text: "       │ [user] redirect to?                                   │", className: "log-line" },
+  { text: "       │        [fallback.stm]?                                │", className: "log-line" },
+  { text: "       │                                                       │", className: "log-line" },
+  { text: "       │        [Y] yes                     [N] no             │", className: "log-line" },
+  { text: "       └────────────────────────────────────────────────────────┘", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "{ animation → transition to FALLBACK STORM }", className: "log-line" },
 ];
 
-
-
-
-
-// =========================
-//   FUNKCJE WSPÓLNE
-// =========================
+function clearScreen() {
+  terminal.innerHTML = "";
+}
 
 function printLines(lines, callback) {
   let index = 0;
@@ -181,16 +175,11 @@ function printLines(lines, callback) {
       return;
     }
 
-    const lineSpec = lines[index];          // <- pojedynczy obiekt z BOOT_LINES
+    const lineSpec = lines[index];
     const lineEl = document.createElement("div");
 
-    // tekst linijki
     lineEl.textContent = lineSpec.text || "";
-
-    // bazowa klasa
     lineEl.classList.add("log-line");
-
-    // dodatkowa klasa z BOOT_LINES (log-ok, log-err itd.)
     if (lineSpec.className) {
       lineEl.classList.add(lineSpec.className);
     }
@@ -198,18 +187,12 @@ function printLines(lines, callback) {
     terminal.appendChild(lineEl);
 
     index++;
-
-    const delay = 200 + Math.random() * 200; // możesz potem zwolnić/przyspieszyć
+    const delay = 200 + Math.random() * 200;
     setTimeout(next, delay);
   }
 
   next();
 }
-
-
-// =========================
-//   URUCHAMIANIE SCEN
-// =========================
 
 function startScene(sceneName) {
   clearScreen();
@@ -219,39 +202,23 @@ function startScene(sceneName) {
   if (sceneName === "BOOT") {
     printLines(BOOT_LINES);
   }
-
-  if (sceneName === "BOOT_2") {
-    printLines(BOOT2_LINES);
-  }
 }
-
-
-// =========================
-//   EVENT: TAP / KLIK / KEY
-// =========================
 
 function handleContinue() {
   if (!waitingForInput) return;
 
   if (currentScene === "BOOT") {
-    startScene("BOOT_2");
-  }
-
-  else if (currentScene === "BOOT_2") {
-    // tu zrobimy SCREEN STORM
-    clearScreen();
-    terminal.textContent = ">> STORM MODE [WIP]\n";
+    const lineEl = document.createElement("div");
+    lineEl.classList.add("log-line");
+    lineEl.textContent = ">> FALLBACK.STM [WIP]";
+    terminal.appendChild(lineEl);
+    waitingForInput = false;
   }
 }
 
 window.addEventListener("keydown", handleContinue);
 window.addEventListener("click", handleContinue);
 window.addEventListener("touchstart", handleContinue);
-
-
-// =========================
-//   START
-// =========================
 
 window.addEventListener("DOMContentLoaded", () => {
   startScene("BOOT");
