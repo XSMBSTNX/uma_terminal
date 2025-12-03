@@ -1,134 +1,179 @@
-/* Reset podstawowy */
+/* ================
+   UMA_CORE CRT BASE
+   ================ */
+
+/* Google Fonts: VT323 + IBM Plex Mono (opcjonalnie, ale warto) */
+@import url("https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap");
+
+/* ZMIENNE KOLORÓW – tu później będziemy się bawić */
+:root {
+  /* główny fosfor (ciemny, wypalony czerwony) */
+  --crt-main: #ff4b66;
+  /* jaśniejsze akcenty */
+  --crt-accent-soft: rgba(255, 110, 140, 0.5);
+  --crt-accent-strong: rgba(255, 110, 140, 0.9);
+  /* kolory statusów */
+  --crt-ok: #8fdc7e;
+  --crt-warn: #f2e38a;
+  --crt-err: #ff8080;
+  --crt-title: #ffd1dd;
+  /* tło */
+  --crt-bg: #050309;
+  --body-bg: #020104;
+}
+
+/* reset / bazowe rzeczy */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
 }
 
-/* Cała strona – ciemne tło, centrowanie ekranu */
 body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #02040a;
-  color: #aef2a0;
-  font-family: "Menlo", "Consolas", "Courier New", monospace;
+  background: radial-gradient(circle at 20% 0%, #09030e 0%, var(--body-bg) 55%, #000 100%);
+  color: var(--crt-main);
+  font-family: "VT323", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 }
 
-/* Wrapper pod „ekran” – docelowo dopasowany pod telefon */
-.crt-wrapper {
+/* GŁÓWNY OBSZAR TERMINALA – pod telefon 390x844 */
+
+.crt-shell {
+  /* jeżeli w HTML nie masz tego wrappera, nic się nie psuje;
+     możemy go dodać później – na razie styl nie szkodzi :) */
   width: 100%;
-  max-width: 390px;      /* docelowa szerokość pod telefon */
-  aspect-ratio: 390 / 844;
-  padding: 8px;
+  max-width: 390px;
+  height: 100vh;
+  max-height: 844px;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
 }
 
-/* Sam ekran CRT */
 .crt-screen {
   position: relative;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 50% 40%, #071b08 0%, #020804 55%, #000000 100%);
+  flex: 1;
+  background: var(--crt-bg);
+  padding: 10px 12px;
   overflow: hidden;
-  border-radius: 14px;
-  border: 2px solid #1b3b24;
+  border-radius: 4px;
   box-shadow:
-    0 0 12px rgba(0, 255, 100, 0.15),
-    0 0 40px rgba(0, 255, 100, 0.15);
+    0 0 18px rgba(0, 0, 0, 0.9),
+    0 0 40px rgba(0, 0, 0, 0.95);
 }
 
-/* Efekty CRT: scanlines i winieta nakładane jako overlaye */
-.crt-overlay {
+/* scanlines + delikatne wypalenie */
+.crt-screen::before {
+  content: "";
   pointer-events: none;
   position: absolute;
   inset: 0;
-  z-index: 10;
-}
-
-/* Poziome linie scanlines */
-.crt-overlay-scanlines {
-  background-image: repeating-linear-gradient(
+  background-image: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.25) 0,
-    rgba(0, 0, 0, 0.25) 1px,
-    rgba(0, 0, 0, 0) 2px
+    rgba(0, 0, 0, 0.35) 1px,
+    rgba(0, 0, 0, 0.15) 2px,
+    transparent 3px
   );
+  background-size: 100% 3px;
+  opacity: 0.45;
   mix-blend-mode: multiply;
+  z-index: 2;
 }
 
-/* Winieta + lekkie „zakrzywienie” */
-.crt-overlay-vignette {
-  box-shadow:
-    inset 0 0 40px rgba(0, 0, 0, 0.95),
-    inset 0 0 120px rgba(0, 0, 0, 0.95);
+/* vignette / wypalenie brzegów */
+.crt-screen::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 170, 190, 0.08), transparent 55%),
+    radial-gradient(circle at 50% 100%, rgba(255, 80, 120, 0.06), transparent 55%),
+    radial-gradient(circle at 0% 0%, rgba(0, 0, 0, 0.65), transparent 55%),
+    radial-gradient(circle at 100% 0%, rgba(0, 0, 0, 0.65), transparent 55%),
+    radial-gradient(circle at 0% 100%, rgba(0, 0, 0, 0.7), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(0, 0, 0, 0.7), transparent 55%);
+  opacity: 0.9;
+  z-index: 3;
 }
 
-/* Treść terminala */
+/* WŁAŚCIWY TERMINAL */
+
 #terminal {
   position: relative;
-  z-index: 5;
+  z-index: 4; /* ponad scanlines/vignette */
   width: 100%;
   height: 100%;
-  padding: 12px 14px;
-  color: #aef2a0;
-  font-size: 12px;
-  line-height: 1.3;
+  overflow: hidden auto;
+  white-space: pre; /* bardzo ważne dla ASCII */
+  font-size: 13px;
+  line-height: 1.25;
+  color: var(--crt-main);
   text-shadow:
-    0 0 4px rgba(134, 255, 164, 0.4),
-    0 0 8px rgba(134, 255, 164, 0.15);
-  overflow: hidden;
-  white-space: pre-wrap;
+    0 0 2px var(--crt-accent-soft),
+    0 0 6px rgba(255, 110, 140, 0.3);
 }
 
-/* Lekki flicker całego ekranu */
-.crt-screen {
-  animation: crt-flicker 3s infinite steps(1, end);
+/* Możesz chcieć nieco mniejszy font na mniejszych ekranach */
+@media (max-width: 420px) {
+  #terminal {
+    font-size: 12px;
+  }
 }
 
-@keyframes crt-flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.98; }
-  70% { opacity: 1; }
-  80% { opacity: 0.96; }
-}
-
-/* Opcjonalny pseudo-kursor, gdybyśmy go chcieli później dorzucić */
-.cursor {
-  display: inline-block;
-  width: 7px;
-  background: #aef2a0;
-  animation: cursor-blink 1s steps(1, end) infinite;
-}
-
-@keyframes cursor-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
+/* PODSTAWOWE KLASY LOGÓW – będziemy na nich pracować */
 
 .log-line {
-  /* domyślny wygląd – możesz zostawić puste albo dopieszczać później */
+  /* wspólna baza linii – tu można dodać np. tiny letter-spacing jeśli zechcesz */
 }
 
-/* zielone OK */
 .log-ok {
-  color: #8fdc7e;
+  color: var(--crt-ok);
 }
 
-/* żółte WARN / LEGACY / CORRUPTED */
 .log-warn {
-  color: #f2e38a;
+  color: var(--crt-warn);
 }
 
-/* czerwone ERR / error */
 .log-err {
-  color: #ff8080;
+  color: var(--crt-err);
 }
 
-/* tytuły / nagłówki */
 .log-title {
-  color: #bfffd3;
+  color: var(--crt-title);
   font-weight: 600;
+}
+
+/* Możesz użyć później np. do glitcha */
+.glitch {
+  animation: crt-glitch 90ms steps(2, end) 0s 1;
+}
+
+@keyframes crt-glitch {
+  0% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-1px);
+  }
+  40% {
+    transform: translateX(1px);
+  }
+  60% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
