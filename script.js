@@ -114,7 +114,7 @@ const BOOT_LINES = [
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "┌────────────────────────────────────────────────────┐", className: "log-line" },
-  { text: "│ [!]   WARN: cache corrupted                     [!] │", className: "log-warn" },
+  { text: "│ [!]   WARN: cache corrupted                    [!] │", className: "log-warn" },
   { text: "│ [!]   ERR: shard-03 read FAIL                  [!] │", className: "log-err" },
   { text: "└────────────────────────────────────────────────────┘", className: "log-line" },
   { text: "", className: "log-line" },
@@ -152,51 +152,24 @@ const BOOT_LINES = [
   { text: "> proceed ........................................... [?]", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
-  { text: "       ┌──────────────────────[ CONFIRM ]──────────────────────┐", className: "log-title" },
-  { text: "       │ [user] redirect to?                                   │", className: "log-line" },
-  { text: "       │        [fallback.stm]?                                │", className: "log-line" },
-  { text: "       │                                                       │", className: "log-line" },
-  { text: "       │        [Y] yes                     [N] no             │", className: "log-line" },
-  { text: "       └────────────────────────────────────────────────────────┘", className: "log-line" },
+  { text: "       ┌─────────────────[ CONFIRM ]───────────────────┐", className: "log-title" },
+  { text: "       │ [user] redirect to? [fallback.stm]?           │", className: "log-line" },
+  { text: "       │                                               │", className: "log-line" },
+  { text: "       │                                               │", className: "log-line" },
+  { text: "       │        [Y] yes                   [N] no       │", className: "log-line" },
+  { text: "       └───────────────────────────────────────────────┘", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "", className: "log-line" },
   { text: "{ animation → transition to FALLBACK STORM }", className: "log-line" },
 ];
 
 
-// --------------
-// SCENA: BOOT_2
-// --------------
 
-const BOOT2_LINES = [
-  "",
-  "--------------------------------------------",
-  "UMA_BOOTLOADER v2.02",
-  "STATUS :: suspended",
-  "",
-  "REASON :: unauthorized activity detected",
-  "",
-  "SCAN   :: scanning connected device...",
-  "SCAN   :: checking integrity...",
-  "SCAN   :: reading hardware fingerprint...",
-  "",
-  "RESULT :: [INTRUDER DETECTED] !!!",
-  "",
-  "OVERRIDE :: system override locked...",
-  "OVERRIDE :: attempting fallback mode...",
-  "",
-  "HINT :: system requires manual confirmation...",
-  "PRESS ANY KEY TO CONTINUE...",
-];
 
 
 // =========================
 //   FUNKCJE WSPÓLNE
 // =========================
-
-function clearScreen() {
-  terminal.textContent = "";
-}
 
 function printLines(lines, callback) {
   let index = 0;
@@ -207,10 +180,26 @@ function printLines(lines, callback) {
       if (callback) callback();
       return;
     }
-    terminal.textContent += lines[index] + "\n";
+
+    const lineSpec = lines[index];          // <- pojedynczy obiekt z BOOT_LINES
+    const lineEl = document.createElement("div");
+
+    // tekst linijki
+    lineEl.textContent = lineSpec.text || "";
+
+    // bazowa klasa
+    lineEl.classList.add("log-line");
+
+    // dodatkowa klasa z BOOT_LINES (log-ok, log-err itd.)
+    if (lineSpec.className) {
+      lineEl.classList.add(lineSpec.className);
+    }
+
+    terminal.appendChild(lineEl);
+
     index++;
 
-    const delay = 180 + Math.random() * 220;
+    const delay = 200 + Math.random() * 200; // możesz potem zwolnić/przyspieszyć
     setTimeout(next, delay);
   }
 
