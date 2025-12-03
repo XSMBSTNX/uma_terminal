@@ -107,3 +107,28 @@ body {
   0%, 49% { opacity: 1; }
   50%, 100% { opacity: 0; }
 }
+
+.log-line {
+  /* domyślny wygląd – możesz zostawić puste albo dopieszczać później */
+}
+
+/* zielone OK */
+.log-ok {
+  color: #8fdc7e;
+}
+
+/* żółte WARN / LEGACY / CORRUPTED */
+.log-warn {
+  color: #f2e38a;
+}
+
+/* czerwone ERR / error */
+.log-err {
+  color: #ff8080;
+}
+
+/* tytuły / nagłówki */
+.log-title {
+  color: #bfffd3;
+  font-weight: 600;
+}
