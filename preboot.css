@@ -1,0 +1,250 @@
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
+/* Page background */
+.preboot-body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #02030a;
+  font-family: "VT323", monospace;
+  color: #aef7ff;
+}
+
+/* Outer device frame (optional) */
+.preboot-shell {
+  width: 100%;
+  max-width: 720px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Main screen window */
+.preboot-frame {
+  position: relative;
+  padding: 32px 40px;
+  background: radial-gradient(circle at 50% 0%, #081219 0, #020308 65%);
+  border-radius: 4px;
+  border: 1px solid rgba(120, 250, 255, 0.25);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+/* Scanlines overlay */
+.preboot-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.35) 1px,
+    rgba(0, 0, 0, 0.05) 2px,
+    transparent 3px
+  );
+  background-size: 100% 3px;
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  z-index: 1;
+}
+
+/* Vignette effect (multiple radial gradients) */
+.preboot-frame::after {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  pointer-events: none;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% -15%, rgba(128, 255, 255, 0.18), transparent 55%),
+    radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0.9), transparent 55%),
+    radial-gradient(circle at 0% 0%, rgba(0, 0, 0, 0.9), transparent 50%),
+    radial-gradient(circle at 100% 0%, rgba(0, 0, 0, 0.9), transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(0, 0, 0, 0.9), transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(0, 0, 0, 0.9), transparent 50%);
+  opacity: 0.9;
+  z-index: 1;
+}
+
+/* Content sits above CRT effects */
+.preboot-inner {
+  position: relative;
+  z-index: 2;
+  text-shadow:
+    0 0 2px rgba(120, 250, 255, 0.6),
+    0 0 4px rgba(0, 160, 200, 0.7);
+}
+
+/* Title */
+.preboot-title {
+  text-align: center;
+  font-size: 2.1rem;
+  letter-spacing: 0.12em;
+  margin: 0 0 18px;
+  color: #8dfcff;
+}
+
+/* System message */
+.preboot-system {
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  margin: 0 0 18px;
+  color: #7be3ff;
+}
+
+/* Separator line */
+.preboot-separator {
+  height: 1px;
+  margin: 10px 0 16px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(140, 255, 255, 0.8),
+    transparent
+  );
+  opacity: 0.7;
+}
+
+/* Instruction sections */
+.preboot-section {
+  margin-bottom: 16px;
+}
+
+.preboot-section-title {
+  color: #aef7ff;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.preboot-text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #c9faff;
+}
+
+/* Footer text */
+.preboot-footer {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6be7ff;
+}
+
+.preboot-link {
+  color: #b7ffb7;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: text-shadow 0.2s ease;
+}
+
+.preboot-link:hover {
+  text-shadow: 0 0 8px #b7ffb7;
+}
+
+/* Install button (Android) */
+.install-btn {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 10px 24px;
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  background: transparent;
+  border: 1px solid #7cff00;
+  color: #7cff00;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.3s ease;
+}
+
+.install-btn:hover {
+  background: #7cff00;
+  color: #000;
+  box-shadow: 0 0 15px #7cff00;
+}
+
+/* =======================
+   CRT Flicker Animation
+   ======================= */
+
+.crt-fx {
+  animation: crtFlicker 4s infinite;
+}
+
+@keyframes crtFlicker {
+  0%, 100% { opacity: 0.98; }
+  10% { opacity: 1; }
+  12% { opacity: 0.90; }
+  13% { opacity: 1; }
+  55% { opacity: 0.97; }
+  57% { opacity: 0.92; }
+  60% { opacity: 1; }
+}
+
+/* =======================
+   Title Glitch Effect
+   ======================= */
+
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+  clip-path: inset(0 0 50% 0);
+}
+
+.glitch::before {
+  animation: glitchTop 2s infinite linear alternate-reverse;
+  color: #ff4b8a;
+  mix-blend-mode: screen;
+}
+
+.glitch::after {
+  animation: glitchBottom 2.2s infinite linear alternate-reverse;
+  color: #4bffb0;
+  clip-path: inset(50% 0 0 0);
+  mix-blend-mode: screen;
+}
+
+@keyframes glitchTop {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-1px, -1px); }
+  40%  { transform: translate(1px, 1px); }
+  60%  { transform: translate(-2px, 0); }
+  80%  { transform: translate(2px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes glitchBottom {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(1px, 1px); }
+  50%  { transform: translate(-1px, 0); }
+  75%  { transform: translate(2px, 1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Responsive - mobile adjustments */
+@media (max-width: 600px) {
+  .preboot-frame {
+    padding: 24px 18px;
+  }
+  .preboot-title {
+    font-size: 1.7rem;
+  }
+  .preboot-text {
+    font-size: 0.85rem;
+  }
+}

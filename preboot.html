@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>UMA Terminal – Preboot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="preboot.css" />
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="UMA">
+</head>
+<body class="preboot-body">
+
+  <div class="preboot-shell">
+    <div class="preboot-frame crt-fx">
+      <div class="preboot-inner">
+
+        <!-- Title with glitch effect -->
+        <h1 class="preboot-title glitch" data-text="[ UMA TERMINAL ]">
+          [ UMA TERMINAL ]
+        </h1>
+
+        <!-- Browser-only content (install instructions) -->
+        <div class="browser-only">
+          <!-- System message -->
+          <p class="preboot-system">
+            [SYSTEM_MSG::01] Neural Dock not detected.<br>
+            UMA-Core interface must be locally deployed onto the host device.
+          </p>
+
+          <!-- Separator -->
+          <div class="preboot-separator"></div>
+
+          <!-- iOS section -->
+          <div class="preboot-section">
+            <div class="preboot-section-title">iOS / iNetdeck:</div>
+            <pre class="preboot-text">1. Initiate: Share Relay  ( ⤴ )
+2. Select : "Add to Home Screen"
+3. Confirm: [ ADD ]</pre>
+          </div>
+
+          <!-- Android section -->
+          <div class="preboot-section">
+            <div class="preboot-section-title">Android / ChromeDeck:</div>
+            <pre class="preboot-text">1. Open   : System Menu  ( ⋮ )
+2. Select : "Install app" / "Add to Home screen"
+3. Confirm: [ ADD ]</pre>
+          </div>
+
+          <!-- Footer message -->
+          <p class="preboot-footer">
+            [SYSTEM_MSG::02] Standalone mode unlocks after local installation.<br>
+            Already installed? <span class="preboot-link" id="launchLink">Launch UMA-Terminal</span>
+          </p>
+
+          <!-- Android install button (shown only when available) -->
+          <button id="installBtn" class="install-btn" style="display: none;">
+            [ INSTALL NOW ]
+          </button>
+        </div>
+
+        <!-- Installed-only content (shown when launched from home screen) -->
+        <div class="installed-only" style="display: none;">
+          <p class="preboot-system">
+            [SYSTEM_MSG::03] ✓ Neural Dock connected.<br>
+            Standalone mode active. Initializing UMA-Core interface...
+          </p>
+
+          <div class="preboot-separator"></div>
+
+          <p class="preboot-footer">
+            Redirecting to terminal interface in <span id="countdown">3</span>s...<br>
+            <span class="preboot-link" id="launchNow">Launch Now</span>
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Detect if running in standalone mode (installed PWA)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                      || window.navigator.standalone === true;
+
+    const browserContent = document.querySelector('.browser-only');
+    const installedContent = document.querySelector('.installed-only');
+
+    if (isStandalone) {
+      // User launched from home screen - show installed state
+      browserContent.style.display = 'none';
+      installedContent.style.display = 'block';
+
+      // Countdown and auto-redirect
+      let seconds = 3;
+      const countdownEl = document.getElementById('countdown');
+      const countdownInterval = setInterval(() => {
+        seconds--;
+        countdownEl.textContent = seconds;
+        if (seconds <= 0) {
+          clearInterval(countdownInterval);
+          window.location.href = 'terminal.html';
+        }
+      }, 1000);
+
+      // Manual launch option
+      document.getElementById('launchNow').addEventListener('click', () => {
+        clearInterval(countdownInterval);
+        window.location.href = 'terminal.html';
+      });
+    } else {
+      // User in browser - show install instructions
+      browserContent.style.display = 'block';
+      installedContent.style.display = 'none';
+
+      // Launch link (goes to terminal even without install)
+      document.getElementById('launchLink').addEventListener('click', () => {
+        window.location.href = 'terminal.html';
+      });
+
+      // Handle Android install prompt
+      let deferredPrompt;
+      
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('installBtn').style.display = 'inline-block';
+      });
+      
+      const installBtn = document.getElementById('installBtn');
+      if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+          if (!deferredPrompt) return;
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === 'accepted') {
+            window.location.href = 'terminal.html';
+          }
+          deferredPrompt = null;
+        });
+      }
+    }
+  </script>
+</body>
+</html>
